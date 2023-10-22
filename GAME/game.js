@@ -18,6 +18,10 @@ class ConfigureScene extends Phaser.Scene {
         this.load.script('webfont', 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js');
         // Adding our microgamejamcontroller.js file script
         this.load.script('microgamejamcontroller', 'LIB/microgamejamcontroller.js');
+        // Adding Bolt audio
+        this.load.audio('twang','ASSETS/Twang.mp3');
+        // music for game
+        this.load.audio('music','ASSETS/Gam_Jam_Song_loop.mp3');
     }
 
     create(){
@@ -35,14 +39,25 @@ class ConfigureScene extends Phaser.Scene {
 class GameScene extends ConfigureScene {
     constructor(){
         super('GameScene');
+        this.gotHit = false;
     }
 
     create(){
+
+        // add music to game
+        this.sound.add('music');
+        const music = this.sound.play('music');
         var gameController = MicrogameJamController(1, 3, true);
         gameController.SetMaxTimer(15, () => {
+            // this.sounds.stop('music');
             // This is the callback function that is called when the timer runs out
             // IF THEY GET HIT GAME OVER IF NOT VICTORY
-            this.scene.start('Victory');
+            this.sound.stopAll();
+            if (!this.gotHit) {
+                // gameController.WinGame();
+                this.scene.start('Victory');
+                // this.scene.restart();
+            }
         });
 
 
@@ -64,6 +79,9 @@ class GameScene extends ConfigureScene {
                 const projectile = new Projectile(this, 960, randomY, 'projectile');
                 // Add the projectile to the projectiles array
                 this.projectiles.push(projectile);
+                // add sound to projectile
+                this.sound.add('twang');
+                this.sound.play('twang');
                 
             }
         });
@@ -114,7 +132,11 @@ class GameScene extends ConfigureScene {
         
             if (this.physics.overlap(projectile, this.player)) {
                 // Handle collision with the player using the custom behavior
+                this.sound.stopAll();
                 projectile.onPlayerCollision();
+                // Set gotHit to true
+                this.gotHit = true;
+                // gameController.LoseGame();
                 this.scene.start('GameOver');
             }
         });
@@ -151,7 +173,8 @@ class Victory extends ConfigureScene {
         super('Victory');
     }
     create(){
-        this.add.text(300, 0, 'You have won the game', this.fontproperties);
+        const gameText = this.add.text(this.cameras.main.width / 2, this.cameras.main.height / 2, 'Congratz on dodging the boltz!', {fontSize: '30px', fontFamily: this.fontproperties.fontFamily,});
+        gameText.setOrigin(0.5, 0.5);
     }
 }
 
