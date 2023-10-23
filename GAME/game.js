@@ -31,7 +31,7 @@ class ConfigureScene extends Phaser.Scene {
         // Adding our projectile sprite
         this.load.image('projectile','ASSETS/BOLT.PNG')
         // Adding our platform sprite
-        this.load.image('platform','ASSETS/platform.PNG')
+        this.load.image('platform','ASSETS/platform.png')
     }
 
     create(){
