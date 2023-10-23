@@ -22,6 +22,16 @@ class ConfigureScene extends Phaser.Scene {
         this.load.audio('twang','ASSETS/Twang.mp3');
         // music for game
         this.load.audio('music','ASSETS/Gam_Jam_Song_loop.mp3');
+        // Adding our player sprite
+        this.load.image('player','ASSETS/Char.PNG')
+        // Adding BG 
+        this.load.image('background','ASSETS/starBG.PNG')
+        // Ship
+        this.load.image('ship','ASSETS/SHIP.PNG')
+        // Adding our projectile sprite
+        this.load.image('projectile','ASSETS/BOLT.PNG')
+        // Adding our platform sprite
+        this.load.image('platform','ASSETS/platform.PNG')
     }
 
     create(){
@@ -43,6 +53,11 @@ class GameScene extends ConfigureScene {
     }
 
     create(){
+
+        // const gameWidth = this.scale.width;
+        // const gameHeight = this.scale.height;
+        const background = this.add.sprite(0,0, 'background');
+        background.setOrigin(0,0);
 
         // add music to game
         this.sound.add('music');
@@ -77,6 +92,9 @@ class GameScene extends ConfigureScene {
                 const randomY = Phaser.Math.Between(minY, maxY);
                 // Create a new projectile
                 const projectile = new Projectile(this, 960, randomY, 'projectile');
+
+                // projectile.setSize(20, 20);
+                // projectile.setOffset(960, randomY);
                 // Add the projectile to the projectiles array
                 this.projectiles.push(projectile);
                 // add sound to projectile
@@ -92,7 +110,7 @@ class GameScene extends ConfigureScene {
       
 
         // Create the player
-        this.player = new Player(this, 80, 450,'player');
+        this.player = new Player(this, 0,0,'player');
         this.add.text(300, 0, 'Bolt Barrage', this.fontproperties);
 
         this.platforms = this.physics.add.staticGroup();
@@ -102,20 +120,67 @@ class GameScene extends ConfigureScene {
         const thirdPlatform = this.addPlatform(100, 180, 200, 20);
         const fourthPlatform = this.addPlatform(100, 10, 200, 20);
 
-        const enemyPlatform = this.addPlatform(850, 270, 200, 500);
+        bottomPlatform.setVisible(false);
+        secondPlatform.setVisible(false);
+        thirdPlatform.setVisible(false);
+        fourthPlatform.setVisible(false);
+        const platformGroup = this.physics.add.group();
+
+        const platform = this.add.sprite(0,0, 'platform');
+        platform.setOrigin(0.04,-.27);
+        this.physics.world.enable(platform);
+        platform.body.immovable = false;
+        platformGroup.add(platform);
+        // Change the width of the platform
+        const newWidth = 1500; // Set your desired width
+        platform.setScale(newWidth / platform.displayWidth, 1);
+        
+
+        const platform2 = this.add.sprite(0,0, 'platform'); 
+        platform2.setOrigin(.04,.05);
+        this.physics.world.enable(platform2);
+        platform2.body.immovable = false;
+        platformGroup.add(platform);
+        platform2.setScale(newWidth / platform2.displayWidth, 1);
+
+
+        const platform3 = this.add.sprite(0,0, 'platform');
+        platform3.setOrigin(.04,.35);
+        this.physics.world.enable(platform3);
+        platform3.body.immovable = false;
+        platformGroup.add(platform);
+        platform3.setScale(newWidth / platform3.displayWidth, 1);
+
+        const platform4 = this.add.sprite(0,0, 'platform');
+        platform4.setOrigin(.04,.65);
+        this.physics.world.enable(platform4);
+        platform4.body.immovable = false;
+        platformGroup.add(platform);
+        platform4.setScale(newWidth / platform4.displayWidth, 1);
+
+
+
+        // const enemyPlatform = this.addPlatform(850, 270, 200, 500);
+        const enemyShip = this.add.sprite(0,0, 'ship');
+        enemyShip.setOrigin(0,0);
+       
+
         // Set up collision between player and platforms
         this.physics.add.collider(this.player, this.platforms, (player, platform) => {
             // Collision with bottom platform
             if (platform === bottomPlatform) {
                 // move player to top of platform
-                player.y = 100;
+                // player.y = 200;
+                player.body.y = 20;
             } else if (platform === secondPlatform) {
-                player.y = 250;
+                // player.x = 400;
+                // player.body.y = 0;
+                player.body.y = 400;
               
             } else if (platform === thirdPlatform) {
-                player.y = 100;
+                player.body.y = 200;    
             } else if (platform === fourthPlatform) {
-                player.y = 450;
+                player.body.y = 400;
             }
         });
 
@@ -186,7 +251,7 @@ const config = {
         default: 'arcade',
         arcade: {
             gravity: { y: 0 }, // Customize gravity as needed
-            debug: true, // Set to true for debugging collision
+            debug: false, // Set to true for debugging collision
         }
     },
     parent: 'game-container',
