@@ -3,3 +3,7 @@ body {
     height : 540px;
     width : 960px;
 }
+
+h1 {
+    font-family: 'Pixelify Sans';
+}
